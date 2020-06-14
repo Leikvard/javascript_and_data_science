@@ -1,42 +1,30 @@
+//Find the smallest common multiple of the provided parameters that can be evenly divided by both, as well as by all sequential numbers in the range between these parameters.
+//The range will be an array of two numbers that will not necessarily be in numerical order.
+
+//version description: in this code, a product of all integers ranging between two numbers given in the argument is created first
+//then factorize the product until it cannot be further factorized, this is the smallest common multiple then
 function smallestCommons(arr) {
     //sort the argument array and get the smaller number (m) and bigger number (n)
     let m = arr.sort((a, b) => a - b)[0];
+    if (m == 1) {m = 2;}
     let n = arr.sort((a, b) => a - b)[1];
-    //create a new 'primes' variable which equals to an array of integers ranging from 2 to n
-    let primes = Array.from({length: n + 1}).map((_, i) => i).slice(2);
-    //filter 'primes' so that it contains prime number only
-    for (let n in primes) {
-        primes = primes.filter(num => num == primes[n] || num % primes[n] != 0);
-    }
-    //create a 'counts' variable which is an array of the same length with 'primes' array filled with 0
-    let counts = Array(primes.length).fill(0);
-    //prime factorization of integers through m to n
-    //update 'counts' array with the highest count of each prime factor 
-    for (let index in primes) {
-        //prime factorization starts from the smallest prime number
-        let prime = primes[index];
-        //initialize a 'count' variable equal to 0, reprenting count of the prime number in factorization
-        let count = 0;
-        //primes factorization starts from number m and increment to n
-        for (let j = m; j <= n; j++) {
-            //copy j to num so that j will not be changed during the loop
-            let num = j;
-            //reset count to 0 for each new factorization on a new number
-            count = 0;
-            //prime factorization on the number 'num'
-            while(num % prime == 0) {
-                num /= prime;
-                count += 1;
-            }
-            //update 'counts' array with the highest 'count' 
-            if (count > counts[index]) {
-                counts[index] = count;
-            }
+    //create a new 'factors' variable which equals to an array of integers ranging from 2 to n
+    let factors = Array.from({length: n + 1}).map((_, i) => i).slice(2);
+    //create a 'numbers' variable equal to a sequence of integers ranging from m to n;
+    let numbers = factors.slice(m - 2, n - 1);
+    //create a 'product' variable equal to the product of m through n, which may not be the smallest common multiple
+    let product = numbers.reduce((accu, val) => accu * val);
+    for (let index in factors) {
+        let factor = factors[index];
+        //if product divided by factor is still a common multiple, divide product by factor to get a smaller common multiple
+        while(numbers.reduce((flag, val) => flag && (product / factor) % val == 0, true)) {
+            product /= factor;
         }
+        //filter away numbers that are multiple of the variable 'product'
+        factors = factors.filter(val => val == factor || val % factor != 0);
     }
-    //multiply 'primes' array and 'counts' array to get smallest common multiple
-    return primes.reduce(function(multiple, prime, index) {return multiple * (prime ** counts[index]);}, 1)
-}
+    return product;
+ }
   
   
 var test1 = smallestCommons([1,5]);
