@@ -1,16 +1,9 @@
 //Given the array arr, iterate through and remove each element starting from the first element (the 0 index) until the function func returns true when the iterated element is passed through it.
 //Then return the rest of the array once the condition is satisfied, otherwise, arr should be returned as an empty array.
 
-//variable 'index' is created equal to the length of array in argument first
-//then a for loop is used to iterate through each element of the array until the first element that fullfill then argument function is met, then index is updated to the index of this first element
-
+//a variable 'flag' equal to false is created first
+//apply filter method to arr and once flag is set to true after the first encounter of func returning true, it will not be reset to false
 function dropElements(arr, func) {
-    let index = arr.length;
-    for (let i = 0; i < arr.length; i++) {
-      if (func(arr[i])){
-        index = i;
-        break;
-      }
-    }
-    return arr.slice(index);
+    let flag = false;
+    return arr.filter(elem => {if(func(elem)) {flag = true;} return flag;});
   }
